@@ -1,18 +1,31 @@
+<?php use KumbiaPHP\View\View; ?>
 <div id="k2_debug_container">
-    <h5>Consultas Realizadas: <b><?php echo is_array($queries) ? count($queries) : 0 ?></b></h5>
-    <?php if (is_array($queries) && count($queries)): ?>
-        <ul>
-            <?php foreach ($queries as $query): ?>
-                <li>
-                    <code><?php eh($query['query']) ?></code>
-                    <br/>Parametros: (
-                    <?php foreach ((array) $query['parameters'] as $index => $value): ?>
-                        <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
-                    <?php endforeach; ?> );
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <ul class="k2_debug_tabs">
+        <li id="k2_debug_queries">
+            <h5>Consultas Realizadas: <?php echo is_array($queries) ? count($queries) : 0 ?></h5>
+            <div class="k2_debug_info">                
+            <?php if (is_array($queries) && count($queries)): ?>
+                <ul class="k2_debug_queries_list">
+                    <?php foreach ($queries as $query): ?>
+                        <li>
+                            <code><?php eh($query['query']) ?></code>
+                            <br/>Parametros: (
+                            <?php foreach ((array) $query['parameters'] as $index => $value): ?>
+                                <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
+                            <?php endforeach; ?> );
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+            </div>
+        </li>
+        <li>
+            <h5>Archivos Incluidos: <?php echo count(get_included_files()) ?></h5>
+        </li>
+        <li>
+            <h5>Información de la Petición: <?php echo View::app()->getCurrentUrl() ?></h5>
+        </li>
+    </ul>
 </div>
 <style>
     #k2_debug_container{
@@ -22,15 +35,38 @@
         background-color: #F5F5F5;
         bottom: 0px;
         left: 0px;
-        overflow: auto;
         box-shadow: 0 0px 5px #000;
     }
-    #k2_debug_container:hover{
-        height: 300px;
+
+    .k2_debug_tabs{
+    }
+    .k2_debug_tabs li{
+        padding: 10px;
+        vertical-align: top;
+        display: inline-block;
+        border-right: 1px solid #c1c0c0;
+        width: 20%;
+        position: relative;
     }
 
-    #k2_debug_container ul li{
+    #k2_debug_container .k2_debug_queries_list li{
         border-bottom: 1px solid #c1c0c0;
-        padding: 8px;
+        padding: 5%;
+        width: 90%;
+    }
+    
+    .k2_debug_tabs > li:hover .k2_debug_info{
+        display: block;
+    }
+    .k2_debug_info{
+        display: none;
+        position: fixed;
+        width: 100%;
+        left: 0px;
+        background-color: #e6e4e4;
+        box-shadow: 0 0px 5px #000;
+        bottom: 49px;
+        max-height: 400px;
+        overflow: auto;
     }
 </style>
