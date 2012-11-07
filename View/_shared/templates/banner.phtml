@@ -1,0 +1,36 @@
+<div id="k2_debug_container">
+    <h5>Consultas Realizadas: <b><?php echo is_array($queries) ? count($queries) : 0 ?></b></h5>
+    <?php if (is_array($queries) && count($queries)): ?>
+        <ul>
+            <?php foreach ($queries as $query): ?>
+                <li>
+                    <code><?php eh($query['query']) ?></code>
+                    <br/>Parametros: (
+                    <?php foreach ((array) $query['parameters'] as $index => $value): ?>
+                        <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
+                    <?php endforeach; ?> );
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+</div>
+<style>
+    #k2_debug_container{
+        position: fixed;
+        height: 50px;
+        width: 100%;
+        background-color: #F5F5F5;
+        bottom: 0px;
+        left: 0px;
+        overflow: auto;
+        box-shadow: 0 0px 5px #000;
+    }
+    #k2_debug_container:hover{
+        height: 300px;
+    }
+
+    #k2_debug_container ul li{
+        border-bottom: 1px solid #c1c0c0;
+        padding: 8px;
+    }
+</style>
