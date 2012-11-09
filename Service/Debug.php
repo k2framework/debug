@@ -3,8 +3,10 @@
 namespace K2\Debug\Service;
 
 use KumbiaPHP\View\View;
+use KumbiaPHP\Kernel\Request;
 use KumbiaPHP\Kernel\Event\ResponseEvent;
 use KumbiaPHP\Kernel\Session\SessionInterface;
+use KumbiaPHP\Di\Container\ContainerInterface;
 use KumbiaPHP\ActiveRecord\Event\AfterQueryEvent;
 use KumbiaPHP\ActiveRecord\Event\BeforeQueryEvent;
 
@@ -31,35 +33,44 @@ class Debug
      */
     protected $session;
 
-    function __construct(View $view, SessionInterface $session)
+    /**
+     *
+     * @var Request 
+     */
+    protected $request;
+
+    function __construct(ContainerInterface $container)
     {
-        $this->view = $view;
-        $this->session = $session;
+        $this->view = $container->get('view');
+        $this->session = $container->get('session');
+        $this->request = $container->get('request');
     }
 
     public function onResponse(ResponseEvent $event)
     {
-        if (function_exists('mb_stripos')) {
-            $posrFunction = 'mb_strripos';
-            $substrFunction = 'mb_substr';
-        } else {
-            $posrFunction = 'strripos';
-            $substrFunction = 'substr';
-        }
+        if (!$this->request->isAjax()) {
+            if (function_exists('mb_stripos')) {
+                $posrFunction = 'mb_strripos';
+                $substrFunction = 'mb_substr';
+            } else {
+                $posrFunction = 'strripos';
+                $substrFunction = 'substr';
+            }
 
-        $response = $event->getResponse();
-        $content = $response->getContent();
+            $response = $event->getResponse();
+            $content = $response->getContent();
 
-        if (false !== $pos = $posrFunction($content, '</body>')) {
+            if (false !== $pos = $posrFunction($content, '</body>')) {
 
-            $html = $this->view->render('K2/Debug:banner', null, array(
-                        'queries' => $this->session->all('k2_debug_queries')
-                    ))->getContent();
-            
-            $this->session->delete(null,'k2_debug_queries');
+                $html = $this->view->render('K2/Debug:banner', null, array(
+                            'queries' => $this->session->all('k2_debug_queries')
+                        ))->getContent();
 
-            $content = $substrFunction($content, 0, $pos) . $html . $substrFunction($content, $pos);
-            $response->setContent($content);
+                $this->session->delete(null, 'k2_debug_queries');
+
+                $content = $substrFunction($content, 0, $pos) . $html . $substrFunction($content, $pos);
+                $response->setContent($content);
+            }
         }
     }
 
@@ -70,12 +81,13 @@ class Debug
 
     public function onAfterQuery(AfterQueryEvent $event)
     {
-        $this->addQuery($event, microtime() - $this->queryTimeInit);
+        if (!$this->request->isAjax()) {
+            $this->addQuery($event, microtime() - $this->queryTimeInit);
+        }
     }
 
     protected function addQuery(AfterQueryEvent $event, $runtime)
     {
-        //$this->queries[] = array(
         $data = array(
             'runtime' => $runtime,
             'query' => $event->getQuery(),
