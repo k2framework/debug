@@ -18,7 +18,6 @@ use KumbiaPHP\ActiveRecord\Event\BeforeQueryEvent;
 class Debug
 {
 
-    protected $queries;
     protected $queryTimeInit;
 
     /**
@@ -38,6 +37,7 @@ class Debug
      * @var Request 
      */
     protected $request;
+    protected $dumps;
 
     function __construct(ContainerInterface $container)
     {
@@ -63,7 +63,8 @@ class Debug
             if (false !== $pos = $posrFunction($content, '</body>')) {
 
                 $html = $this->view->render('K2/Debug:banner', null, array(
-                            'queries' => $this->session->all('k2_debug_queries')
+                            'queries' => $this->session->all('k2_debug_queries'),
+                            'dumps' => $this->dumps,
                         ))->getContent();
 
                 $this->session->delete(null, 'k2_debug_queries');
@@ -84,6 +85,14 @@ class Debug
         if (!$this->request->isAjax()) {
             $this->addQuery($event, microtime() - $this->queryTimeInit);
         }
+    }
+
+    public function dump($title, $var)
+    {
+        if (isset($this->dumps[$title])) {
+            $title .= '_' . microtime();
+        }
+        $this->dumps[$title] = $var;
     }
 
     protected function addQuery(AfterQueryEvent $event, $runtime)

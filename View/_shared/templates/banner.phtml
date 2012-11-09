@@ -41,6 +41,16 @@
                 </ul>
             </div>
         </li>
+        <li>
+            <h5>Variables Volcadas: <?php echo count($dumps) ?></h5>
+            <div class="k2_debug_info">
+                <ul>                    
+                    <?php foreach ((array) $dumps as $title => $var): ?>
+                        <li><b><?php eh($title) ?></b><pre><?php var_dump($var) ?></pre></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </li>
     </ul>
 </div>
 <style>
