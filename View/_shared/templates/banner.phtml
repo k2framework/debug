@@ -1,36 +1,52 @@
-<?php use KumbiaPHP\View\View; ?>
+<?php
+
+ use KumbiaPHP\View\View; ?>
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
         <li id="k2_debug_queries">
             <h5>Consultas Realizadas: <?php echo is_array($queries) ? count($queries) : 0 ?></h5>
             <div class="k2_debug_info">                
-            <?php if (is_array($queries) && count($queries)): ?>
-                <ul class="k2_debug_queries_list">
-                    <?php foreach ($queries as $query): ?>
-                        <li>
-                            <code><?php eh($query['query']) ?></code>
-                            <br/>Parametros: (
-                            <?php foreach ((array) $query['parameters'] as $index => $value): ?>
-                                <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
-                            <?php endforeach; ?> );
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
+                <?php if (is_array($queries) && count($queries)): ?>
+                    <ol class="k2_debug_queries_list">
+                        <?php foreach ($queries as $query): ?>
+                            <li>
+                                <code><?php eh($query['query']) ?></code>
+                                <br/>Parametros: (
+                                <?php foreach ((array) $query['parameters'] as $index => $value): ?>
+                                    <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
+                                <?php endforeach; ?> );
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                <?php endif; ?>
             </div>
         </li>
         <li>
             <h5>Archivos Incluidos: <?php echo count(get_included_files()) ?></h5>
+            <div class="k2_debug_info">
+                <ul>                    
+                    <?php foreach ((array) get_included_files() as $file): ?>
+                        <li><?php eh($file) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </li>
         <li>
-            <h5>Información de la Petición: <?php echo View::app()->getCurrentUrl() ?></h5>
+            <h5>Petición: <?php echo View::app()->getCurrentUrl() ?></h5>
+            <div class="k2_debug_info">
+                <ul>
+                    <li><b>Módulo:</b> <?php eh(View::app()->getCurrentModuleUrl()) ?> => <?php eh(View::app()->getCurrentModule()) ?></li>
+                    <li><b>Controlador:</b> <?php eh(View::app()->getCurrentController()) ?></li>
+                    <li><b>Acción:</b> <?php eh(View::app()->getCurrentAction()) ?></li>
+                </ul>
+            </div>
         </li>
     </ul>
 </div>
 <style>
     #k2_debug_container{
         position: fixed;
-        height: 50px;
+        height: 35px;
         width: 100%;
         background-color: #F5F5F5;
         bottom: 0px;
@@ -48,13 +64,20 @@
         width: 20%;
         position: relative;
     }
-
-    #k2_debug_container .k2_debug_queries_list li{
-        border-bottom: 1px solid #c1c0c0;
-        padding: 5%;
-        width: 90%;
+    .k2_debug_tabs li h5{
+        margin: 0px;
+        padding: 0px;
     }
-    
+
+    #k2_debug_container .k2_debug_info ul{
+        width: 100%;
+    }
+    #k2_debug_container .k2_debug_info li{
+        border-bottom: 1px solid #c1c0c0;
+        padding: 10px;
+        width: 100%;
+    }
+
     .k2_debug_tabs > li:hover .k2_debug_info{
         display: block;
     }
@@ -65,7 +88,7 @@
         left: 0px;
         background-color: #e6e4e4;
         box-shadow: 0 0px 5px #000;
-        bottom: 49px;
+        bottom: 34px;
         max-height: 400px;
         overflow: auto;
     }
