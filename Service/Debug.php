@@ -4,6 +4,7 @@ namespace K2\Debug\Service;
 
 use KumbiaPHP\View\View;
 use KumbiaPHP\Kernel\Request;
+use KumbiaPHP\Kernel\KernelInterface;
 use KumbiaPHP\Kernel\Event\ResponseEvent;
 use KumbiaPHP\Kernel\Session\SessionInterface;
 use KumbiaPHP\Di\Container\ContainerInterface;
@@ -48,7 +49,17 @@ class Debug
 
     public function onResponse(ResponseEvent $event)
     {
-        if (!$this->request->isAjax()) {
+        if (KernelInterface::MASTER_REQUEST === $this->request->getAppContext()
+                        ->getRequestType() && !$this->request->isAjax()) {
+
+            $response = $event->getResponse();
+
+            //preguntamos si el Content-Type de la respuesta es diferente de text/html
+            if (0 !== strpos($response->headers->get('Content-Type', 'text/html'), 'text/html')) {
+                //si no es un html lo que se responde no insertamos el banner
+                return;
+            }
+
             if (function_exists('mb_stripos')) {
                 $posrFunction = 'mb_strripos';
                 $substrFunction = 'mb_substr';
@@ -57,7 +68,6 @@ class Debug
                 $substrFunction = 'substr';
             }
 
-            $response = $event->getResponse();
             $content = $response->getContent();
 
             if (false !== $pos = $posrFunction($content, '</body>')) {
@@ -65,6 +75,9 @@ class Debug
                 $html = $this->view->render('K2/Debug:banner', null, array(
                             'queries' => $this->session->all('k2_debug_queries'),
                             'dumps' => $this->dumps,
+                            'headers' => $response->headers->all(),
+                            'status' => $response->getStatusCode(),
+                            'charset' =>  $response->getCharset(),
                         ))->getContent();
 
                 $this->session->delete(null, 'k2_debug_queries');
