@@ -4,6 +4,7 @@ namespace K2\Debug\Service;
 
 use KumbiaPHP\View\View;
 use KumbiaPHP\Kernel\Request;
+use KumbiaPHP\Kernel\Collection;
 use KumbiaPHP\Kernel\KernelInterface;
 use KumbiaPHP\Kernel\Event\ResponseEvent;
 use KumbiaPHP\Kernel\Session\SessionInterface;
@@ -38,13 +39,27 @@ class Debug
      * @var Request 
      */
     protected $request;
+
+    /**
+     *
+     * @var array 
+     */
     protected $dumps;
+
+    /**
+     *
+     * @var Collection
+     */
+    protected $queries;
 
     function __construct(ContainerInterface $container)
     {
         $this->view = $container->get('view');
         $this->session = $container->get('session');
         $this->request = $container->get('request');
+        $this->queries = new Collection();
+        $this->session->set($this->request->getRequestUrl()
+                , $this->queries, 'k2_debug_queries');
     }
 
     public function onResponse(ResponseEvent $event)
@@ -112,6 +127,7 @@ class Debug
 
     protected function addQuery(AfterQueryEvent $event, $runtime)
     {
+        $numQueries = (int) $this->session->get('numQueries', 'k2_debug_queries');
         $data = array(
             'runtime' => $runtime,
             'query' => $event->getQuery(),
@@ -119,7 +135,8 @@ class Debug
             'type' => $event->getQueryType(),
             'result' => $event->getResult(),
         );
-        $this->session->set(md5(microtime()), $data, 'k2_debug_queries');
+        $this->queries->set(++$numQueries, $data);
+        $this->session->set('numQueries', $numQueries, 'k2_debug_queries');
     }
 
 }

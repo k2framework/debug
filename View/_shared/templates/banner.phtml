@@ -1,23 +1,29 @@
 <?php
+$numQueries = $queries['numQueries'];
+unset($queries['numQueries']);
 
- use KumbiaPHP\View\View; ?>
+use KumbiaPHP\View\View;
+?>
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
         <li id="k2_debug_queries">
-            <h5>Consultas SQL: <?php echo is_array($queries) ? count($queries) : 0 ?></h5>
+            <h5>Consultas SQL: <?php echo $numQueries ?></h5>
             <div class="k2_debug_info">                
                 <?php if (is_array($queries) && count($queries)): ?>
-                    <ul class="k2_debug_queries_list">
-                        <?php foreach ($queries as $query): ?>
-                        <li class="k2_debug_query_<?php echo strtolower($query['type']) ?>">
-                                <code><?php eh($query['query']) ?></code>
-                                <br/>Parametros: (
-                                <?php foreach ((array) $query['parameters'] as $index => $value): ?>
-                                    <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
-                                <?php endforeach; ?> );
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <?php foreach ($queries as $url => $collection): ?>
+                        <ul class="k2_debug_queries_list">
+                            <li><h4> Petición: <?php eh($url) ?></h4></li>
+                            <?php foreach ($collection->all() as $query): ?>
+                                <li class="k2_debug_query_<?php echo strtolower($query['type']) ?>">
+                                    <code><?php eh($query['query']) ?></code>
+                                    <br/>Parametros: (
+                                    <?php foreach ((array) $query['parameters'] as $index => $value): ?>
+                                        <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
+                                    <?php endforeach; ?> );
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </li>
