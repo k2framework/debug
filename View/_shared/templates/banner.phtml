@@ -1,6 +1,10 @@
 <?php
-$numQueries = $queries['numQueries'];
-unset($queries['numQueries']);
+if (isset($queries['numQueries'])) {
+    $numQueries = $queries['numQueries'];
+    unset($queries['numQueries']);
+} else {
+    $numQueries = 0;
+}
 
 use KumbiaPHP\View\View;
 ?>
