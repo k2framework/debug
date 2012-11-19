@@ -9,7 +9,7 @@
                 <?php if (is_array($queries) && count($queries)): ?>
                     <ul class="k2_debug_queries_list">
                         <?php foreach ($queries as $query): ?>
-                            <li>
+                        <li class="k2_debug_query_<?php echo strtolower($query['type']) ?>">
                                 <code><?php eh($query['query']) ?></code>
                                 <br/>Parametros: (
                                 <?php foreach ((array) $query['parameters'] as $index => $value): ?>
@@ -76,58 +76,17 @@
     </ul>
 </div>
 <style>
-    #k2_debug_container{
-        position: fixed;
-        height: 50px;
-        width: 100%;
-        background-color: #F5F5F5;
-        bottom: 0px;
-        left: 0px;
-        box-shadow: 0 0px 5px #000;
-    }
-
-    .k2_debug_tabs{
-        margin: 0px 10px;
-        padding: 0;
-        white-space: nowrap
-    }
-    .k2_debug_tabs li{
-        padding: 5px;
-        vertical-align: top;
-        display: inline-block;
-        border-right: 1px solid #c1c0c0;
-        width: 15%;
-        position: relative;
-        white-space: normal;
-        min-height: 45px
-    }
-    .k2_debug_tabs li h5{
-        margin: 0px;
-        padding: 0px;
-    }
-
-    #k2_debug_container .k2_debug_info ul{
-        width: 100%;
-    }
-    #k2_debug_container .k2_debug_info li{
-        border-bottom: 1px solid #c1c0c0;
-        padding: 10px;
-        width: 100%;
-        min-height: 20px
-    }
-
-    .k2_debug_tabs > li:hover .k2_debug_info{
-        display: block;
-    }
-    .k2_debug_info{
-        display: none;
-        position: fixed;
-        width: 100%;
-        left: 0px;
-        background-color: #e6e4e4;
-        box-shadow: 0 0px 5px #000;
-        bottom: 49px;
-        max-height: 400px;
-        overflow: auto;
-    }
+    #k2_debug_container{position: fixed;height: 50px;width: 100%;background-color: #F5F5F5;bottom: 0px;left: 0px;box-shadow: 0 0px 5px #000}
+    .k2_debug_tabs{margin: 0px 10px;padding: 0;white-space: nowrap}
+    .k2_debug_tabs li{padding: 5px;vertical-align: top;display: inline-block;border-right: 1px solid #c1c0c0;width: 15%;position: relative;white-space: normal;min-height: 45px}
+    .k2_debug_tabs li h5{margin: 0px;padding: 0px}
+    #k2_debug_container .k2_debug_info ul{width: 100%;}
+    #k2_debug_container .k2_debug_info li{border-bottom: 1px solid #c1c0c0;padding: 10px;width: 100%;min-height: 20px}
+    .k2_debug_tabs > li:hover .k2_debug_info{display: block;}
+    .k2_debug_info{display: none;position: fixed;width: 100%;left: 0px;background-color: #e6e4e4;box-shadow: 0 0px 5px #000;bottom: 49px;max-height: 400px;overflow: auto;}
+    .k2_debug_queries_list{margin: 0;padding: 0}
+    .k2_debug_query_select{background-color: #f0f7ff}
+    .k2_debug_query_insert{background-color: #f0fff0}
+    .k2_debug_query_update{background-color: #f6ebfc}
+    .k2_debug_query_delete{background-color: #feefef}
 </style>
