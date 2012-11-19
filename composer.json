@@ -1,0 +1,10 @@
+{
+    "name": "K2/Debug",
+    "type": "library",
+    "autoload": {
+        "psr-0":{ 
+            "K2\\Debug\\": "/"
+        }
+    },
+    "minimum-stability": "dev"
+}
