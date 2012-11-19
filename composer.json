@@ -1,5 +1,5 @@
 {
-    "name": "K2/Debug",
+    "name": "k2/debug",
     "type": "library",
     "autoload": {
         "psr-0":{ 
