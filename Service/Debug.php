@@ -49,10 +49,12 @@ class Debug
 
     public function onResponse(ResponseEvent $event)
     {
+        /* @var $response \KumbiaPHP\Kernel\Response */
+        $response = $event->getResponse();
         if (KernelInterface::MASTER_REQUEST === $this->request->getAppContext()
-                        ->getRequestType() && !$this->request->isAjax()) {
+                        ->getRequestType() && !$this->request->isAjax() &&
+                !$response instanceof \KumbiaPHP\Kernel\RedirectResponse) {
 
-            $response = $event->getResponse();
 
             //preguntamos si el Content-Type de la respuesta es diferente de text/html
             if (0 !== strpos($response->headers->get('Content-Type', 'text/html'), 'text/html')) {
@@ -77,7 +79,7 @@ class Debug
                             'dumps' => $this->dumps,
                             'headers' => $response->headers->all(),
                             'status' => $response->getStatusCode(),
-                            'charset' =>  $response->getCharset(),
+                            'charset' => $response->getCharset(),
                         ))->getContent();
 
                 $this->session->delete(null, 'k2_debug_queries');
