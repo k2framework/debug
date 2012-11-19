@@ -3,8 +3,8 @@
     "type": "library",
     "autoload": {
         "psr-0":{ 
-            "K2\\Debug\\": "/"
+            "K2\\Debug\\": ""
         }
     },
-    "minimum-stability": "dev"
+    "target-dir": "K2/Debug"
 }
