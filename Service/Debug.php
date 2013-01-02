@@ -2,17 +2,17 @@
 
 namespace K2\Debug\Service;
 
-use KumbiaPHP\View\View;
-use KumbiaPHP\Kernel\Request;
-use KumbiaPHP\Kernel\Collection;
-use KumbiaPHP\Security\Security;
-use KumbiaPHP\Kernel\KernelInterface;
-use KumbiaPHP\Kernel\Event\ResponseEvent;
-use KumbiaPHP\Security\Event\SecurityEvent;
-use KumbiaPHP\Kernel\Session\SessionInterface;
-use KumbiaPHP\Di\Container\ContainerInterface;
-use KumbiaPHP\ActiveRecord\Event\AfterQueryEvent;
-use KumbiaPHP\ActiveRecord\Event\BeforeQueryEvent;
+use K2\View\View;
+use K2\Kernel\Request;
+use K2\Kernel\Collection;
+use K2\Security\Security;
+use K2\Kernel\KernelInterface;
+use K2\Kernel\Event\ResponseEvent;
+use K2\Security\Event\SecurityEvent;
+use K2\Kernel\Session\SessionInterface;
+use K2\Di\Container\ContainerInterface;
+use K2\ActiveRecord\Event\AfterQueryEvent;
+use K2\ActiveRecord\Event\BeforeQueryEvent;
 
 /**
  * Description of Debug
@@ -66,11 +66,11 @@ class Debug
 
     public function onResponse(ResponseEvent $event)
     {
-        /* @var $response \KumbiaPHP\Kernel\Response */
+        /* @var $response \K2\Kernel\Response */
         $response = $event->getResponse();
         if (KernelInterface::MASTER_REQUEST === $this->request->getAppContext()
                         ->getRequestType() && !$this->request->isAjax() &&
-                !$response instanceof \KumbiaPHP\Kernel\RedirectResponse) {
+                !$response instanceof \K2\Kernel\RedirectResponse) {
 
 
             //preguntamos si el Content-Type de la respuesta es diferente de text/html

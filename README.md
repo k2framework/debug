@@ -14,10 +14,8 @@ Solo debemos descargar e instalar la lib en **vendor/K2/Debug** y registrarla en
 protected function registerModules()
 {
     $modules = array(
-        'KumbiaPHP'   => __DIR__ . '/../../vendor/kumbiaphp/kumbiaphp/src/',
-        'Index'       => __DIR__ . '/modules/',
         ...
-        'K2/Debug'   => __DIR__ . '/../../vendor/',
+        new \K2\Debug\K2DebugModule(),
     );
     ...
 }
