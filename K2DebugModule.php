@@ -12,7 +12,7 @@ class K2DebugModule extends Module
     public function init()
     {
         $this->container->set('k2_debug', function($c) {
-                    $debug = new Service\Debug($c);
+                    return new Service\Debug($c);
                 });
 
         $this->dispatcher->addListener(E::RESPONSE, array('k2_debug', 'onResponse'));
