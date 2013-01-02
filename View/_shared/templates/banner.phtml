@@ -6,7 +6,8 @@ if (isset($queries['numQueries'])) {
     $numQueries = 0;
 }
 
-use KumbiaPHP\View\View;
+use K2\View\View;
+use K2\Kernel\App;
 ?>
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
@@ -44,14 +45,14 @@ use KumbiaPHP\View\View;
             </div>
         </li>
         <li>
-            <h5>Petición: <?php echo View::app()->getRequestUrl() ?></h5>
+            <h5>Petición: <?php echo \K2\Kernel\App::requestUrl() ?></h5>
             <div class="k2_debug_info">
                 <ul>
-                    <li><b>URL:</b> <?php echo View::app()->getRequestUrl() ?></li>
-                    <li><b>Módulo:</b> <?php eh(View::app()->getCurrentModuleUrl()) ?> => <?php eh(View::app()->getCurrentModule()) ?></li>
-                    <li><b>Controlador:</b> <?php eh(View::app()->getCurrentController()) ?></li>
-                    <li><b>Acción:</b> <?php eh(View::app()->getCurrentAction()) ?></li>
-                    <li><b>Parametros:</b> <?php echo print_r(View::app()->getCurrentParameters(), true) ?></li>
+                    <li><b>URL:</b> <?php echo App::requestUrl() ?></li>
+                    <li><b>Módulo:</b> <?php eh(App::getContext()->getCurrentModuleUrl()) ?> => <?php eh(App::getContext()->getCurrentModule()) ?></li>
+                    <li><b>Controlador:</b> <?php eh(App::getContext()->getCurrentController()) ?></li>
+                    <li><b>Acción:</b> <?php eh(App::getContext()->getCurrentAction()) ?></li>
+                    <li><b>Parametros:</b> <?php echo print_r(App::getContext()->getCurrentParameters(), true) ?></li>
                 </ul>
             </div>
         </li>
@@ -84,9 +85,9 @@ use KumbiaPHP\View\View;
             <?php endif ?>
         </li>
         <li style="width: 150px">
-            <h5>Usuario: <?php echo View::get('security')->isLogged() ? View::get('security')->getToken()->getUsername() : 'No hay sesión.' ?></h5>
-            <?php if (View::get('security')->isLogged()): ?>
-                <?php $token = View::get('security')->getToken() ?>
+            <h5>Usuario: <?php echo App::get('security')->isLogged() ? App::getUser()->getUsername() : 'No hay sesión.' ?></h5>
+            <?php if (App::get('security')->isLogged()): ?>
+                <?php $token = App::get('security')->getToken() ?>
                 <div class="k2_debug_info">
                     <ul>
                         <li><b>Clase de Usuario</b>: <?php eh(get_class($token->getUser())) ?></li>
@@ -94,7 +95,7 @@ use KumbiaPHP\View\View;
                         <li><b>Roles</b>:
                             <ul>
                                 <?php foreach ((array) $token->getRoles() as $rol): ?>
-                                    <li><?php eh($rol instanceof KumbiaPHP\Security\Acl\Role\RoleInterface ? $rol->getName() : $rol) ?></li>
+                                    <li><?php eh($rol instanceof K2\Security\Acl\Role\RoleInterface ? $rol->getName() : $rol) ?></li>
                                 <?php endforeach ?>
                             </ul>
                         </li>
