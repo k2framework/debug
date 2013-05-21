@@ -2,15 +2,13 @@
 
 namespace K2\Debug\Service;
 
-use K2\View\View;
-use K2\Kernel\Request;
+use K2\Kernel\App;
+use K2\Kernel\Kernel;
+use \Twig_Environment;
 use K2\Kernel\Collection;
-use K2\Security\Security;
-use K2\Kernel\KernelInterface;
 use K2\Kernel\Event\ResponseEvent;
-use K2\Security\Event\SecurityEvent;
 use K2\Kernel\Session\SessionInterface;
-use K2\Di\Container\ContainerInterface;
+use K2\Security\Acl\Role\RoleInterface;
 use K2\ActiveRecord\Event\AfterQueryEvent;
 use K2\ActiveRecord\Event\BeforeQueryEvent;
 
@@ -26,21 +24,15 @@ class Debug
 
     /**
      *
-     * @var View 
+     * @var Twig_Environment 
      */
-    protected $view;
+    protected $twig;
 
     /**
      *
      * @var SessionInterface 
      */
     protected $session;
-
-    /**
-     *
-     * @var Request 
-     */
-    protected $request;
 
     /**
      *
@@ -54,31 +46,28 @@ class Debug
      */
     protected $queries;
 
-    function __construct(ContainerInterface $container)
+    function __construct()
     {
-        $this->view = $container->get('view');
-        $this->session = $container->get('session');
-        $this->request = $container->get('request');
+        $this->twig = App::get('twig');
         $this->queries = new Collection();
-        $this->session->set($this->request->getRequestUrl()
+        $this->session = App::get('session');
+        $this->session->set(App::getRequest()->getRequestUrl()
                 , $this->queries, 'k2_debug_queries');
     }
 
     public function onResponse(ResponseEvent $event)
     {
-        /* @var $response \K2\Kernel\Response */
         $response = $event->getResponse();
-        if (KernelInterface::MASTER_REQUEST === $this->request->getAppContext()
-                        ->getRequestType() && !$this->request->isAjax() &&
-                !$response instanceof \K2\Kernel\RedirectResponse) {
+        $request = App::getRequest();
 
+        if (Kernel::MASTER_REQUEST === $request->getType() && !$request->isAjax() &&
+                !$response instanceof \K2\Kernel\RedirectResponse) {
 
             //preguntamos si el Content-Type de la respuesta es diferente de text/html
             if (0 !== strpos($response->headers->get('Content-Type', 'text/html'), 'text/html')) {
                 //si no es un html lo que se responde no insertamos el banner
                 return;
             }
-
             if (function_exists('mb_stripos')) {
                 $posrFunction = 'mb_strripos';
                 $substrFunction = 'mb_substr';
@@ -91,17 +80,33 @@ class Debug
 
             if (false !== $pos = $posrFunction($content, '</body>')) {
 
-                $html = $this->view->render(
-                                array(
-                                    'template' => 'K2/Debug:banner',
-                                    'params' => array(
-                                        'queries' => $this->session->all('k2_debug_queries'),
-                                        'dumps' => $this->dumps,
-                                        'headers' => $response->headers->all(),
-                                        'status' => $response->getStatusCode(),
-                                        'charset' => $response->getCharset(),
-                                    ),
-                        ))->getContent();
+                if (App::get('security')->isLogged()) {
+                    $token = App::get('security')->getToken();
+                    $tokenAttrs = array_merge((array) $token->getAttributes(), get_object_vars($token->getUser()));
+                    $roles = array_map(function($rol) {
+                                return $rol instanceof RoleInterface ? $rol->getName() : $rol;
+                            }, (array) $token->getRoles());
+                    $userClass = get_class($token->getUser());
+                } else {
+                    $token = null;
+                    $tokenAttrs = array();
+                    $roles = array();
+                    $userClass = null;
+                }
+
+                $html = $this->twig->render('@K2Debug/banner.twig', array(
+                    'queries' => $this->session->all('k2_debug_queries'),
+                    'dumps' => $this->dumps,
+                    'headers' => $response->headers->all(),
+                    'status' => $response->getStatusCode(),
+                    'charset' => $response->getCharset(),
+                    'token' => $token,
+                    'token_attrs' => $tokenAttrs,
+                    'roles' => $roles,
+                    'user_class' => $userClass,
+                    'tiempo' => round((microtime(1) - START_TIME), 4),
+                    'memoria' => number_format(memory_get_usage() / 1048576, 2),
+                ));
 
                 $this->session->delete(null, 'k2_debug_queries');
 
