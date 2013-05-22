@@ -72,7 +72,7 @@ class Debug
                 $posrFunction = 'strripos';
                 $substrFunction = 'substr';
             }
-            var_dump($this->queries);die;
+
             $content = $response->getContent();
 
             if (false !== $pos = $posrFunction($content, '</body>')) {
@@ -132,8 +132,7 @@ class Debug
     {
         $numQueries = (int) $this->session->get('numQueries', 'k2_debug_queries');
         $data = array(
-            'query' => $event->getStatement()->queryString,
-            //'parameters' => $event->getParameters(),
+            'query' => $event->getStatement()->getSqlQuery(),
             'type' => $event->getQueryType(),
             'result' => $event->getResult(),
         );
