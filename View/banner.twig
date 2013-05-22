@@ -1,7 +1,7 @@
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
         <li id="k2_debug_queries" style="width: 130px">
-            <h5>Consultas SQL: {{ queries.count }}</h5>
+            <h5>Consultas SQL: {{ queries.count|default(0) }}</h5>
             {% if queries.queries %}
                 <div class="k2_debug_info">
                     {% for url, collection in queries.queries %}
