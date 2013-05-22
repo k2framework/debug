@@ -7,10 +7,9 @@ use K2\Kernel\Kernel;
 use \Twig_Environment;
 use K2\Kernel\Collection;
 use K2\Kernel\Event\ResponseEvent;
+use ActiveRecord\Event\QueryEvent;
 use K2\Kernel\Session\SessionInterface;
 use K2\Security\Acl\Role\RoleInterface;
-use K2\ActiveRecord\Event\AfterQueryEvent;
-use K2\ActiveRecord\Event\BeforeQueryEvent;
 
 /**
  * Description of Debug
@@ -19,8 +18,6 @@ use K2\ActiveRecord\Event\BeforeQueryEvent;
  */
 class Debug
 {
-
-    protected $queryTimeInit;
 
     /**
      *
@@ -75,7 +72,7 @@ class Debug
                 $posrFunction = 'strripos';
                 $substrFunction = 'substr';
             }
-
+            var_dump($this->queries);die;
             $content = $response->getContent();
 
             if (false !== $pos = $posrFunction($content, '</body>')) {
@@ -116,15 +113,10 @@ class Debug
         }
     }
 
-    public function onBeforeQuery(BeforeQueryEvent $event)
+    public function onQuery(QueryEvent $event)
     {
-        $this->queryTimeInit = microtime();
-    }
-
-    public function onAfterQuery(AfterQueryEvent $event)
-    {
-        if (!$this->request->isAjax()) {
-            $this->addQuery($event, microtime() - $this->queryTimeInit);
+        if (!App::getRequest()->isAjax()) {
+            $this->addQuery($event);
         }
     }
 
@@ -136,13 +128,12 @@ class Debug
         $this->dumps[$title] = $var;
     }
 
-    protected function addQuery(AfterQueryEvent $event, $runtime)
+    protected function addQuery(QueryEvent $event)
     {
         $numQueries = (int) $this->session->get('numQueries', 'k2_debug_queries');
         $data = array(
-            'runtime' => $runtime,
-            'query' => $event->getQuery(),
-            'parameters' => $event->getParameters(),
+            'query' => $event->getStatement()->queryString,
+            //'parameters' => $event->getParameters(),
             'type' => $event->getQueryType(),
             'result' => $event->getResult(),
         );

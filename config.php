@@ -4,6 +4,7 @@ namespace K2\Backend;
 
 use K2\Debug\Service\Debug;
 use K2\Kernel\Event\K2Events as E;
+use ActiveRecord\Event\Events as AREvents;
 
 return array(
     'name' => 'K2Debug',
@@ -17,6 +18,9 @@ return array(
     'listeners' => array(
         E::RESPONSE => array(
             array('k2_debug', 'onResponse')
+        ),
+        AREvents::QUERY => array(
+            array('k2_debug', 'onQuery')
         ),
     ),
 );
