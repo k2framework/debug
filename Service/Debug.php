@@ -48,7 +48,7 @@ class Debug
         $this->twig = App::get('twig');
         $this->queries = new Collection();
         $this->session = App::get('session');
-        $this->session->set(App::getRequest()->getRequestUrl()
+        $this->session->set(App::getRequest()->getRequestUrl() . ' (' . date('d-m-Y H:i:s') . ')'
                 , $this->queries, 'k2_debug_queries');
     }
 
