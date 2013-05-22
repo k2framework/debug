@@ -1,25 +1,21 @@
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
         <li id="k2_debug_queries" style="width: 130px">
-            <h5>Consultas SQL: {{ queries.numQueries|default(0) }}</h5>
-            {% if queries %}
+            <h5>Consultas SQL: {{ queries.count }}</h5>
+            {% if queries.queries %}
                 <div class="k2_debug_info">
-                    {#<?php foreach ($queries as $url => $collection): ?>
-                        <?php if (count($collection->all())): ?>
+                    {% for url, collection in queries.queries %}
+                        {% if collection.all() %}
                             <ul class="k2_debug_queries_list">
-                                <li><h4> Petición: <?php eh($url) ?></h4></li>
-                                <?php foreach ($collection->all() as $query): ?>
-                                    <li class="k2_debug_query_<?php echo strtolower($query['type']) ?>">
-                                        <code><?php eh($query['query']) ?></code>
-                                        <br/>Parametros: (
-                                        <?php foreach ((array) $query['parameters'] as $index => $value): ?>
-                                            <b> <?php eh($index) ?></b> => <?php eh($value) ?>,
-                                        <?php endforeach; ?> );
+                                <li><h4> Petición: {{ url }}</h4></li>
+                                {% for query in collection.all %}
+                                    <li class="k2_debug_query_{{ query.type|lower }}">
+                                        <code>{{ query.sql }}</code>
                                     </li>
-                                <?php endforeach; ?>
+                                {% endfor %}
                             </ul>
-                        <?php endif; ?>
-                    <?php endforeach; ?>#}
+                        {% endif %}
+                    {% endfor %}
                 </div>
             {% endif %}
         </li>

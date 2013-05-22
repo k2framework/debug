@@ -90,9 +90,15 @@ class Debug
                     $roles = array();
                     $userClass = null;
                 }
+                                
+                $dataQueries['count'] = $this->session->get('numQueries','k2_debug_queries');
+                $this->session->delete('numQueries','k2_debug_queries');
+                $dataQueries['queries'] = $this->session->all('k2_debug_queries');
+                
+                $this->session->delete(null, 'k2_debug_queries');
 
                 $html = $this->twig->render('@K2Debug/banner.twig', array(
-                    'queries' => $this->session->all('k2_debug_queries'),
+                    'queries' => $dataQueries,
                     'dumps' => $this->dumps,
                     'headers' => $response->headers->all(),
                     'status' => $response->getStatusCode(),
@@ -104,8 +110,6 @@ class Debug
                     'tiempo' => round((microtime(1) - START_TIME), 4),
                     'memoria' => number_format(memory_get_usage() / 1048576, 2),
                 ));
-
-                $this->session->delete(null, 'k2_debug_queries');
 
                 $content = $substrFunction($content, 0, $pos) . $html . $substrFunction($content, $pos);
                 $response->setContent($content);
@@ -132,7 +136,7 @@ class Debug
     {
         $numQueries = (int) $this->session->get('numQueries', 'k2_debug_queries');
         $data = array(
-            'query' => $event->getStatement()->getSqlQuery(),
+            'sql' => $event->getStatement()->getSqlQuery(),
             'type' => $event->getQueryType(),
             'result' => $event->getResult(),
         );
