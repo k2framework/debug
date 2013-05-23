@@ -12,6 +12,7 @@ return array(
     'path' => __DIR__,
     'services' => array(
         'k2_debug' => function() {
+            \K2\Kernel\App::addSerciveToRequest('k2_debug');
             return new Debug();
         },
     ),

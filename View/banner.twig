@@ -1,6 +1,6 @@
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
-        <li id="k2_debug_queries" style="width: 130px">
+        <li id="k2_debug_queries" style="min-width: 130px">
             <h5>Consultas SQL: {{ queries.count|default(0) }}</h5>
             {% if queries.queries %}
                 <div class="k2_debug_info">
@@ -31,7 +31,7 @@
                 </ul>
             </div>
         </li>
-        <li style="width: 160px">
+        <li style="min-width: 160px">
             <h5>Respuesta: Status = {{ status }}</h5>
             <div class="k2_debug_info">
                 <ul>
@@ -47,7 +47,7 @@
                 </ul>
             </div>
         </li>
-        <li style="width: 140px">
+        <li style="min-width: 140px">
             <h5>Variables Volcadas: {{ dumps|length }}</h5>
             {% if dumps %}
                 <div class="k2_debug_info">
@@ -59,7 +59,7 @@
                 </div>
             {% endif %}
         </li>
-        <li style="width: 150px">
+        <li style="min-width: 150px">
             <h5>Usuario: {{ token and app.user.username ? app.user.username : 'No hay sesión.' }}</h5>
             {% if token %}
                 <div class="k2_debug_info">
@@ -84,7 +84,7 @@
                 </div>
             {% endif %}
         </li>
-        <li style="width: 140px">
+        <li style="min-width: 140px">
             <h5>{{ tiempo }} seg. / {{ memoria }} MB</h5>
         </li>
     </ul>
@@ -92,15 +92,27 @@
 <style>
     #k2_debug_container{position: fixed;height: 50px;width: 100%;background-color: #F5F5F5;bottom: 0px;left: 0px;box-shadow: 0 0px 5px #000}
     .k2_debug_tabs{margin: 0px 10px;padding: 0;white-space: nowrap}
-    .k2_debug_tabs li{padding: 5px;vertical-align: top;display: inline-block;border-right: 1px solid #c1c0c0;width: 15%;position: relative;white-space: normal;min-height: 45px}
-    .k2_debug_tabs li h5{margin: 0px;padding: 0px;font-size: 12px;overflow: hidden;white-space: nowrap}
+    .k2_debug_tabs li{padding: 5px;vertical-align: top;display: inline-block;border-right: 1px solid #c1c0c0;width: 16.5%;position: relative;white-space: normal;min-height: 45px;}
+    .k2_debug_tabs li h5{margin: 0px;padding: 0px;font-size: 12px;overflow: hidden;white-space: nowrap;cursor: pointer}
     #k2_debug_container .k2_debug_info ul{width: 100%;}
     #k2_debug_container .k2_debug_info li{border-bottom: 1px solid #c1c0c0;padding: 10px;width: 100%;min-height: 20px}
-    .k2_debug_tabs > li:hover .k2_debug_info{display: block;}
     .k2_debug_info{display: none;position: fixed;width: 100%;left: 0px;background-color: #e6e4e4;box-shadow: 0 0px 5px #000;bottom: 49px;max-height: 400px;overflow: auto;}
     .k2_debug_queries_list{margin: 0;padding: 0}
     .k2_debug_query_select{background-color: #f0f7ff}
     .k2_debug_query_insert{background-color: #f0fff0}
     .k2_debug_query_update{background-color: #f6ebfc}
     .k2_debug_query_delete{background-color: #feefef}
+    .k2_debug_show{display: block}
+    {% if jquery == false %}.k2_debug_tabs>li:hover>.k2_debug_info{display: block}{% endif %}
 </style>
+{% if jquery == true %}
+<script>
+    $(function($){
+        $(".k2_debug_tabs > li").on('click', function(event){
+            event.preventDefault()
+            $(".k2_debug_info").not($(this).find(".k2_debug_info")).removeClass('k2_debug_show')
+            $(this).find(".k2_debug_info").toggleClass('k2_debug_show')
+        })
+    })
+</script>
+{% endif %}

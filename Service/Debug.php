@@ -90,11 +90,11 @@ class Debug
                     $roles = array();
                     $userClass = null;
                 }
-                                
-                $dataQueries['count'] = $this->session->get('numQueries','k2_debug_queries');
-                $this->session->delete('numQueries','k2_debug_queries');
+
+                $dataQueries['count'] = $this->session->get('numQueries', 'k2_debug_queries');
+                $this->session->delete('numQueries', 'k2_debug_queries');
                 $dataQueries['queries'] = $this->session->all('k2_debug_queries');
-                
+
                 $this->session->delete(null, 'k2_debug_queries');
 
                 $html = $this->twig->render('@K2Debug/banner.twig', array(
@@ -109,6 +109,7 @@ class Debug
                     'user_class' => $userClass,
                     'tiempo' => round((microtime(1) - START_TIME), 4),
                     'memoria' => number_format(memory_get_usage() / 1048576, 2),
+                    'jquery' => $this->hasJquery($content),
                 ));
 
                 $content = $substrFunction($content, 0, $pos) . $html . $substrFunction($content, $pos);
@@ -142,6 +143,11 @@ class Debug
         );
         $this->queries->set(++$numQueries, $data);
         $this->session->set('numQueries', $numQueries, 'k2_debug_queries');
+    }
+
+    protected function hasJquery($content)
+    {
+        return false !== strpos($content, 'jquery');
     }
 
 }
