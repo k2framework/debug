@@ -6,8 +6,8 @@ use K2\Kernel\App;
 use K2\Kernel\Kernel;
 use \Twig_Environment;
 use K2\Kernel\Collection;
+use ActiveRecord\Event\Event;
 use K2\Kernel\Event\ResponseEvent;
-use ActiveRecord\Event\QueryEvent;
 use K2\Kernel\Session\SessionInterface;
 use K2\Security\Acl\Role\RoleInterface;
 
@@ -118,7 +118,7 @@ class Debug
         }
     }
 
-    public function onQuery(QueryEvent $event)
+    public function onQuery(Event $event)
     {
         if (!App::getRequest()->isAjax()) {
             $this->addQuery($event);
@@ -133,7 +133,7 @@ class Debug
         $this->dumps[$title] = $var;
     }
 
-    protected function addQuery(QueryEvent $event)
+    protected function addQuery(Event $event)
     {
         $numQueries = (int) $this->session->get('numQueries', 'k2_debug_queries');
         $data = array(
