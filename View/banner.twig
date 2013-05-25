@@ -1,5 +1,6 @@
 <div id="k2_debug_container">
     <ul class="k2_debug_tabs">
+        <li class="li_close"><h5>&laquo;</h5></li>
         <li id="k2_debug_queries" style="min-width: 130px">
             <h5>Consultas SQL: {{ queries.count|default(0) }}</h5>
             {% if queries.queries %}
@@ -90,9 +91,9 @@
     </ul>
 </div>
 <style>
-    #k2_debug_container{position: fixed;height: 50px;width: 100%;background-color: #F5F5F5;bottom: 0px;left: 0px;box-shadow: 0 0px 5px #000}
+    #k2_debug_container{position: fixed;height: 40px;width: 100%;background-color: #F5F5F5;bottom: 0px;left: 0px;box-shadow: 0 0px 5px #000;border-top-right-radius: 10px}
     .k2_debug_tabs{margin: 0px 10px;padding: 0;white-space: nowrap}
-    .k2_debug_tabs li{padding: 5px;vertical-align: top;display: inline-block;border-right: 1px solid #c1c0c0;width: 16.5%;position: relative;white-space: normal;min-height: 45px;}
+    .k2_debug_tabs li{padding: 5px;vertical-align: top;display: inline-block;border-right: 1px solid #c1c0c0;width: 15%;position: relative;white-space: normal;min-height: 40px;}
     .k2_debug_tabs li h5{margin: 0px;padding: 0px;font-size: 12px;overflow: hidden;white-space: nowrap;cursor: pointer}
     #k2_debug_container .k2_debug_info ul{width: 100%;}
     #k2_debug_container .k2_debug_info li{border-bottom: 1px solid #c1c0c0;padding: 10px;width: 100%;min-height: 20px}
@@ -103,6 +104,9 @@
     .k2_debug_query_update{background-color: #f6ebfc}
     .k2_debug_query_delete{background-color: #feefef}
     .k2_debug_show{display: block}
+    .k2_debug_tabs li.li_close{width: 25px}
+    .k2_debug_tabs li.li_close.closed{border-right: none}
+    .k2_debug_tabs li.li_close h5{font-size: 30px;margin-top: 3px}
     {% if jquery == false %}.k2_debug_tabs>li:hover>.k2_debug_info{display: block}{% endif %}
 </style>
 {% if jquery == true %}
@@ -112,6 +116,19 @@
             event.preventDefault()
             $(".k2_debug_info").not($(this).find(".k2_debug_info")).removeClass('k2_debug_show')
             $(this).find(".k2_debug_info").toggleClass('k2_debug_show')
+        })
+        $(".k2_debug_tabs .li_close").on('click', function(event){
+            event.preventDefault()
+            if($(this).is('.closed')){
+                $(this).removeClass('closed').html("<h5>&laquo;</h5>")
+                $("#k2_debug_container").animate({width : '100%'})                
+                $(".k2_debug_tabs > li:not(.li_close)").show()
+            }else{                
+                $(this).addClass('closed').html("<h5>&raquo;</h5>")
+                $("#k2_debug_container").animate({width : '45px'})
+                $(".k2_debug_tabs > li:not(.li_close)").hide()
+                
+            }
         })
     })
 </script>
