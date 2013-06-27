@@ -39,11 +39,11 @@
                     <li><b>Charset:</b> {{ charset }}</li>
                     <li><b>Estado:</b> {{ status }}</li>
                     {% for h,i in headers %}
-                        {% if is_numeric(i) %}
+                        {#% if is_numeric(i) %}
                             <li><b>{{ h }}</b></li>
-                        {% else %}
+                        {% else %#}
                             <li><b>{{ i }}</b> {{ h }}</li>
-                        {% endif %}
+                        {#% endif %#}
                     {% endfor %}
                 </ul>
             </div>
