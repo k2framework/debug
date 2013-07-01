@@ -11,19 +11,17 @@ return array(
     'namespace' => __NAMESPACE__,
     'path' => __DIR__,
     'services' => array(
-        'k2_debug' => function() {
-            \K2\Kernel\App::addSerciveToRequest('k2_debug');
-            return new Debug();
-        },
-    ),
-    'listeners' => array(
-        E::RESPONSE => array(
-            array('k2_debug', 'onResponse')
+        'k2_debug' => array(
+            'callback' => function() {
+                \K2\Kernel\App::addSerciveToRequest('k2_debug');
+                return new Debug();
+            },
+            'tags' => array(
+                array('name' => 'event.listener', 'event' => E::RESPONSE, 'method' => 'onResponse'),
+                array('name' => 'event.listener', 'event' => AREvents::QUERY, 'method' => 'onQuery'),
+            ),
         ),
-        AREvents::QUERY => array(
-            array('k2_debug', 'onQuery')
-        ),
-    ),
+    )
 );
 
 
